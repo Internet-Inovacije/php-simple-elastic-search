@@ -8,15 +8,15 @@
 
 class simpleElasticSearch {
 
-  protected static $instance;
+  protected static $_instance;
 
   static function instance () {
-    if (self::$instance === null)
-      self::$instance = new self();
-    return self::$instance;
+    if (self::$_instance === null)
+      self::$_instance = new self();
+    return self::$_instance;
   }
 
-  protected $client;
+  public $client;
 
   function __construct () {
     $this->client = new Elastica\Client();
