@@ -220,11 +220,7 @@ class elasticQuery implements ArrayAccess, Iterator, Countable {
     $search = new Elastica\Search($this->client);
 
     if (array_key_exists('select', $query)) {
-      if (count($query['select']) == 1 && count(array_filter($query['select'], 'is_int')) == 0)
-        $selects = array($query['select']);
-      else
-        $selects = $query['select'];
-      foreach ($selects as $select) {
+      foreach ($query['select'] as $select) {
         version_assert and assertTrue(is_array($select) && count($select) == 1);
         version_assert and assertNotEqual(current($select), '');
         if (key($select) == 'index')
