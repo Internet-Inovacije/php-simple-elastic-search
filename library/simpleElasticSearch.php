@@ -223,10 +223,12 @@ class elasticQuery implements ArrayAccess, Iterator, Countable {
       foreach ($query['select'] as $select) {
         version_assert and assertTrue(is_array($select) && count($select) >= 1);
         version_assert and assertNotEqual(current($select), '');
-        if (key($select) == 'index')
-          $search->addIndex(current($select));
-        if (key($select) == 'type')
-          $search->addType(current($select));
+        foreach ($select as $key => $value) {
+          if ($key == 'index')
+            $search->addIndex($value);
+          if ($key == 'type')
+            $search->addType($value);
+        }
       }
     }
 
