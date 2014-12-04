@@ -118,6 +118,12 @@ class simpleElasticSearch {
     ;
   }
 
+  function update ($id, $properties, $index, $type) {
+    $this->client
+      ->updateDocument($id, new \Elastica\Document($id, $properties), $index, $type)
+    ;
+  }
+
 }
 
 class elasticQuery implements ArrayAccess, Iterator, Countable {
