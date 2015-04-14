@@ -138,6 +138,11 @@ class elasticQuery implements ArrayAccess, Iterator, Countable {
 
   protected $buffer = array();
   protected $nextBufferOffset = 0;
+
+  function getResults () {
+    return self::executeElasticSearch($this->query);
+  }
+
   function ensureBufferData () {
     if (count($this->buffer) == 0) {
       $query = $this->query;
