@@ -281,6 +281,9 @@ class elasticQuery implements ArrayAccess, Iterator, Countable {
     if (array_key_exists('query', $query))
       $rawQuery['query'] = $query['query'];
 
+    if (array_key_exists('_source', $query) && is_array($query['_source']))
+      $rawQuery['_source'] = $query['_source'];
+
     return array($search, new Elastica\Query($rawQuery));
   }
 
