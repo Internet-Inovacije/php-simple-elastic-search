@@ -284,6 +284,9 @@ class elasticQuery implements ArrayAccess, Iterator, Countable {
     if (array_key_exists('_source', $query) && is_array($query['_source']))
       $rawQuery['_source'] = $query['_source'];
 
+    if (array_key_exists('min_score', $query))
+      $rawQuery['min_score'] = $query['min_score'];
+
     return array($search, new Elastica\Query($rawQuery));
   }
 
