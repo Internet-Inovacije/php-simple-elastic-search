@@ -70,19 +70,33 @@ class simpleElasticSearch {
       version_assert and assertNotEqual($indexName, '');
       $index = $this->client->getIndex($indexName);
 
-      //if (false)
       if ($index->exists())
         $index->delete();
 
       if (!$index->exists())
-        $index->create(array('analysis' => $indexMapping['analysis']));
+        $index->create();
 
+      /** push mappings */
+      $index->close(); // index must be closed to push mappings
+
+      $index->setSettings([
+        'analysis' => $indexMapping['analysis'], // push custom analysis
+      ]);
+
+      /** all properties are in common for all our entities */
+      $properties = [];
       foreach ($indexMapping['types'] as $typeName => $typeMapping) {
-        $elasticMapping = new \Elastica\Type\Mapping();
-        $elasticMapping->setType($index->getType($typeName));
-        $elasticMapping->setProperties($typeMapping['properties']);
-        $elasticMapping->send();
+        $properties = array_merge_recursive_overwrite($properties, $typeMapping['properties']);
       }
+
+      $endpoint = new \Elasticsearch\Endpoints\Indices\Mapping\Put();
+      $endpoint->setBody([
+        'properties' => $properties,
+      ]);
+
+      $index->requestEndpoint($endpoint);
+
+      $index->open(); // open index for operations
 
     }
 
@@ -105,22 +119,20 @@ class simpleElasticSearch {
   function set ($document) {
     $this->client
       ->getIndex($document['index'])
-      ->getType($document['type'])
-      ->addDocument(new \Elastica\Document($document['properties']['id'], $document['properties']))
+      ->addDocuments([new \Elastica\Document($document['properties']['id'], $document['properties'])])
     ;
   }
 
   function delete ($document) {
     $this->client
       ->getIndex($document['index'])
-      ->getType($document['type'])
-      ->deleteDocument(new \Elastica\Document($document['properties']['id'], $document['properties']))
+      ->deleteDocuments([new \Elastica\Document($document['properties']['id'], $document['properties'])])
     ;
   }
 
-  function update ($id, $properties, $index, $type) {
+  function update ($id, $properties, $index) {
     $this->client
-      ->updateDocument($id, new \Elastica\Document($id, $properties), $index, $type)
+      ->updateDocument($id, new \Elastica\Document($id, $properties), $index)
     ;
   }
 
@@ -237,8 +249,6 @@ class elasticQuery implements ArrayAccess, Iterator, Countable {
         foreach ($select as $key => $value) {
           if ($key == 'index')
             $search->addIndex($value);
-          if ($key == 'type')
-            $search->addType($value);
         }
       }
     }
@@ -286,6 +296,9 @@ class elasticQuery implements ArrayAccess, Iterator, Countable {
 
     if (array_key_exists('min_score', $query))
       $rawQuery['min_score'] = $query['min_score'];
+
+    if (array_key_exists('highlight', $query))
+      $rawQuery['highlight'] = $query['highlight'];
 
     return array($search, new Elastica\Query($rawQuery));
   }

@@ -8,8 +8,8 @@
     }
   ],
   "require": {
-    "php": ">=7.0.0",
-    "ruflin/Elastica": "6.0.2"
+    "php": ">=7.1.0",
+    "ruflin/Elastica": "7.x"
   },
   "repositories": [
     {
