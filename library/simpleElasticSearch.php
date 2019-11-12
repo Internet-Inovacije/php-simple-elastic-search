@@ -300,6 +300,9 @@ class elasticQuery implements ArrayAccess, Iterator, Countable {
     if (array_key_exists('highlight', $query))
       $rawQuery['highlight'] = $query['highlight'];
 
+    if (array_key_exists('aggs', $query))
+      $rawQuery['aggs'] = $query['aggs'];
+
     return array($search, new Elastica\Query($rawQuery));
   }
 
