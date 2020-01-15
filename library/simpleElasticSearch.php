@@ -299,7 +299,7 @@ class elasticQuery implements ArrayAccess, Iterator, Countable {
     list($search, $elasticQuery) = $this->elasticBind($query);
 
     // overwrite default limit - this executes an additional CURL request
-    // $elasticQuery->setSize($search->count($elasticQuery));
+    $elasticQuery->setSize($search->count($elasticQuery));
 
     if (array_key_exists('limit', $query) && count($query['limit']) > 0) {
       $elasticQuery->setFrom($query['limit'][0]);
