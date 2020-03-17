@@ -81,6 +81,11 @@ class simpleElasticSearch {
 
       $index->setSettings([
         'analysis' => $indexMapping['analysis'], // push custom analysis
+        'mapping' => [
+          'total_fields' => [
+            'limit' => $indexMapping['total_fields.limit'] ?? 10000, // default limit is 1000
+          ],
+        ],
       ]);
 
       /** all properties are in common for all our entities */
