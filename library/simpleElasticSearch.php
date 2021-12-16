@@ -83,7 +83,7 @@ class simpleElasticSearch {
         'analysis' => $indexMapping['analysis'], // push custom analysis
         'mapping' => [
           'total_fields' => [
-            'limit' => $indexMapping['total_fields.limit'] ?? 10000, // default limit is 1000
+            'limit' => $indexMapping['total_fields.limit'] ?? 20000, // default limit is 1000
           ],
         ],
       ]);
